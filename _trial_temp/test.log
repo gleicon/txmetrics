@@ -1,0 +1,11 @@
+2013-01-01 03:16:33-0200 [-] Log opened.
+2013-01-01 03:16:33-0200 [-] --> tests.test_counter.TestCounter.test_counter <--
+2013-01-01 03:16:33-0200 [-] Starting factory <txredisapi.RedisFactory instance at 0x110189950>
+2013-01-01 03:16:33-0200 [RedisProtocol,client] Stopping factory <txredisapi.RedisFactory instance at 0x110189950>
+2013-01-01 03:16:33-0200 [-] Main loop terminated.
+2013-01-01 03:16:33-0200 [-] --> tests.test_gauge.TestGauge.test_gauge <--
+2013-01-01 03:16:33-0200 [-] --> tests.test_histogram.TestHistogram.test_histogram_mean <--
+2013-01-01 03:16:33-0200 [-] --> tests.test_histogram.TestHistogram.test_histogram_median <--
+2013-01-01 03:16:33-0200 [-] --> tests.test_histogram.TestHistogram.test_histogram_percentile <--
+2013-01-01 03:16:33-0200 [-] --> tests.test_histogram.TestHistogram.test_histogram_std_dev <--
+2013-01-01 03:16:33-0200 [-] --> tests.test_timer.TestTimer.test_timer <--
