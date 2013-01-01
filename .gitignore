@@ -3,3 +3,5 @@ build
 dist
 pymetrics.egg-info
 *.swp
+_trial_temp/*
+*_trial_temp*
