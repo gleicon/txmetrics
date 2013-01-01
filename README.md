@@ -1,4 +1,4 @@
-# PyMetrics
+# TxMetrics
 
     Redis backed metrics library ported to twisted. Compatible with https://github.com/gleicon/pymetrics. Implements part of the famous Metrics library. Data is interchangeable between both libraries (you can have a traditional python app with pymetrics and a twisted based app sharing data, etc)
 
