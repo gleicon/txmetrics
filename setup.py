@@ -7,17 +7,17 @@ from distutils import log
 log.set_threshold(log.INFO)
 
 setup(
-        name            = "pymetrics",
-        version         = "0.2",
+        name            = "txmetrics",
+        version         = "0.1",
 
-        packages        =   ['pymetrics'],
-        install_requires = ['redis>=2.4.10'],
+        packages        =   ['txmetrics'],
+        install_requires = ['txredisapi'],
 
         # metadata for upload to PyPI
         author          = "Gleicon Moraes",
         author_email    = "gleicon@gmail.com",
-        keywords        = "metrics redis",
-        description     = "simple python metrics",
-        url             = "https://github.com/gleicon/pymetrics",
+        keywords        = "twisted metrics redis",
+        description     = "simple python metrics for twisted",
+        url             = "https://github.com/gleicon/txmetrics",
     )
 
