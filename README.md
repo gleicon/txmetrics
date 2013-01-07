@@ -24,7 +24,14 @@
     
     There is an example/ directory with the general outline for each kind of metric.
     Run all tests with trial tests/
+    All examples used redis.ConnectionPool() as connector.
+    If your application happens to use lazyConnection or lazyConnectionPool, you need to wait for the conn to be true.
+    To do that, add the following code in your method (surrounded by defer.inlineCallbacks):
+        r = redis.lazyConnectionPool(....)
+        yield r._connected
 
 # Depends on
-    Twisted and txredisapi https://github.com/fiorix/txredisapi
-    
+    Twisted and txredisapi https://github.com/fiorix/txredisapi or the cyclone redis driver
+   
+
+(c) gleicon 2013

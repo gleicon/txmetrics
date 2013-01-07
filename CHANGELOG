@@ -1,0 +1,9 @@
+0.2
+Removed pid from metric name to allow for cumulative metrics. This is the default. 
+To revert it to the current behaviour use unique_pid = True on the factory constructor
+    rc = TxMetricsFactory(..., unique_pid = True)
+
+Documented what to do if the redis class is a lazyConnectionPool 
+
+Added counter example
+

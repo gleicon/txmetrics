@@ -10,7 +10,7 @@ from pds_redis import Enum
 from twisted.internet import defer
 
 class BaseMetrics(object):
-    def __init__(self, appname, name, redis, timeout):
+    def __init__(self, appname, name, redis, timeout, unique_pid):
         
         self._appname = appname
         self._timeout = timeout
@@ -18,15 +18,17 @@ class BaseMetrics(object):
 
         _klass = self.__class__.__name__.lower()
         self._instances_per_metric_index = "retrics:index:%s:%s" % (appname,
-                _klass)
-
-        self._name= "%s:%d" % (name, os.getpid())
+                                                                    _klass)
+        if unique_pid is True:
+            self._name = "%s:%d" % (name, os.getpid())
+        else:
+            self._name = name
         self._register()
 
     @defer.inlineCallbacks
     def _register(self):
         d = yield self._redis.zadd(self._instances_per_metric_index, 1.0, self._name)
-    
+
     @defer.inlineCallbacks
     def _unregister(self):
         try:
@@ -94,8 +96,8 @@ class TxMetricsMeter(BaseMetrics):
     second”). In addition to the mean rate, meters also track 1-, 5-, and
     15-minute moving averages.
     """
-    def __init__(self, appname, name, redis, timeout):
-        super(TxMetricsMeter, self).__init__(appname, name, redis, timeout)
+    def __init__(self, appname, name, redis, timeout, unique_pid):
+        super(TxMetricsMeter, self).__init__(appname, name, redis, timeout, unique_pid)
         self._last_t = time.time()
 
     def _ns(self, key):
@@ -180,8 +182,8 @@ class TxMetricsHistogram(BaseMetrics):
     of data. In addition to minimum, maximum, mean, etc., it also measures
     median, 75th, 90th, 95th, 98th, 99th, and 99.9th percentiles.
     """
-    def __init__(self, appname, name, redis, timeout):
-        super(TxMetricsHistogram, self).__init__(appname, name, redis, timeout)
+    def __init__(self, appname, name, redis, timeout, unique_pid):
+        super(TxMetricsHistogram, self).__init__(appname, name, redis, timeout, unique_pid)
         self._list_name = "retrics:histogram:%s:%s" % (self._appname, self._name)
         self._e = Enum([])
 
@@ -291,25 +293,25 @@ class TxMetricsFactory():
     Check the number of instances per metric (if any)
 
     print rf.list_instances_per_metric('gauge')
-    
     """
-    def __init__(self, appname = None, timeout = None, redis=None):
+
+    def __init__(self, appname = None, timeout = None, redis=None, unique_pid=False):
         self._appname = appname
         self._timeout = timeout
         self._redis = redis
-        print "factory: %s" % self._redis
+        self.unique_pid = unique_pid
 
     def _metric_name(self, metric_name):
         _klass = "txmetrics%s" % metric_name.lower()
-        return "retrics:index:%s:%s" % (self._appname,_klass)
-    
+        return "retrics:index:%s:%s" % (self._appname, _klass)
+
     @defer.inlineCallbacks
     def list_instances_per_metric(self, metric_name):
         _klass = "txmetrics%s" % metric_name.lower()
         _instances_per_metric_index = "retrics:index:%s:%s" % (self._appname,
-                _klass.lower())
+                                      _klass.lower())
         v = yield self._redis.zrange(_instances_per_metric_index,
-            0, -1)
+                                     0, -1)
         defer.returnValue(v)
 
     @defer.inlineCallbacks
@@ -320,20 +322,24 @@ class TxMetricsFactory():
         yield kl._unregister()
 
     def new_gauge(self, name):
-        return TxMetricsGauge(self._appname, name, self._redis, self._timeout)
+        return TxMetricsGauge(self._appname, name, self._redis, self._timeout,
+                self.unique_pid)
 
     def new_counter(self, name):
-        return TxMetricsCounter(self._appname, name, self._redis, self._timeout)
+        return TxMetricsCounter(self._appname, name, self._redis, self._timeout,
+                                self.unique_pid)
 
     def new_meter(self, name):
-        return TxMetricsMeter(self._appname, name, self._redis, self._timeout)
+        return TxMetricsMeter(self._appname, name, self._redis, self._timeout,
+                              self.unique_pid)
 
     def new_histogram(self, name):
-        return TxMetricsHistogram(self._appname, name, self._redis, self._timeout)
+        return TxMetricsHistogram(self._appname, name, self._redis,
+                                  self._timeout, self.unique_pid)
 
     def new_timer(self, name):
-        return TxMetricsTimer(self._appname, name, self._redis, self._timeout)
+        return TxMetricsTimer(self._appname, name, self._redis, self._timeout,
+                              self.unique_pid)
 
     def new_healthcheck(self, name):
         pass
-

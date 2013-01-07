@@ -8,7 +8,7 @@ log.set_threshold(log.INFO)
 
 setup(
         name            = "txmetrics",
-        version         = "0.1",
+        version         = "0.2",
 
         packages        =   ['txmetrics'],
         install_requires = ['txredisapi'],
